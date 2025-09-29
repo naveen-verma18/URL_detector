@@ -1,0 +1,5 @@
+# Example suspicious IPs/domains (toy list)
+45.155.205.233
+91.121.79.61
+malicious-site.ru
+phishingsite.com
