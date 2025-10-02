@@ -58,26 +58,80 @@ import joblib
 
 # --------------------------------- Utilities ---------------------------------
 
-SUSPICIOUS_CHARS = ["'", '"', "<", ">", ";", "--", "../", "%"]
+SUSPICIOUS_CHARS = ["'", '"', "<", ">", ";", "--", "../", "%", "`", "$", "&", "|", "\\", "{", "}", "[", "]", "(", ")", "*", "?", "+", "=", "~", "^"]
+
+# Comprehensive attack-specific keywords
 SUSPICIOUS_KEYWORDS = [
-    # SQLi
-    "select", "union", "drop", "insert", "update", "delete", "or 1=1", "sleep(",
-    # XSS
-    "<script", "javascript:", "onerror=", "onload=",
+    # SQL Injection
+    "select", "union", "drop", "insert", "update", "delete", "or 1=1", "sleep(", "waitfor", 
+    "exec", "execute", "sp_", "xp_", "information_schema", "sysobjects", "syscolumns",
+    "having", "group by", "order by", "limit", "offset", "concat", "char(", "ascii(",
+    "substring", "mid(", "length(", "count(", "database()", "version()", "user()",
+    "@@version", "@@user", "load_file", "into outfile", "into dumpfile",
+    
+    # Cross-Site Scripting (XSS)
+    "<script", "javascript:", "onerror=", "onload=", "onmouseover=", "onclick=", 
+    "onfocus=", "onblur=", "onchange=", "onsubmit=", "alert(", "confirm(", "prompt(",
+    "document.cookie", "document.write", "innerhtml", "eval(", "settimeout",
+    "setinterval", "fromcharcode", "unescape", "decodeuri", "atob", "btoa",
+    
+    # Directory Traversal
+    "../", "..\\", "....//", "....\\\\", "%2e%2e%2f", "%2e%2e%5c", "etc/passwd", 
+    "etc/shadow", "boot.ini", "win.ini", "system32", "windows/system32",
+    
     # Command Injection
-    "cmd=", ";", "&&", "||", "`", "$(",
-    # Traversal / LFI/RFI
-    "../", "..\\", "etc/passwd", "file://", "php://", "data://",
-    # SSRF
-    "http://169.254.169.254", "metadata.google.internal",
-    # Cred Stuffing / brute force hints
-    "login", "signin", "password=", "passwd=",
-    # HPP
-    "&&", "%26",
-    # XXE
-    "<!doctype", "<!entity", "!entity",
-    # Web shell
-    "webshell", ".php?", "cmd.php", "shell.php",
+    "cmd=", "command=", "exec=", ";", "&&", "||", "`", "$(", "system(", "shell_exec",
+    "passthru", "popen", "proc_open", "/bin/sh", "/bin/bash", "cmd.exe", "powershell",
+    "whoami", "id", "pwd", "ls", "dir", "cat", "type", "echo", "ping", "nslookup",
+    "wget", "curl", "nc", "netcat", "telnet", "ssh",
+    
+    # Server-Side Request Forgery (SSRF)
+    "http://169.254.169.254", "metadata.google.internal", "localhost", "127.0.0.1",
+    "0.0.0.0", "::1", "file://", "gopher://", "dict://", "ftp://", "tftp://",
+    "ldap://", "jar://", "netdoc://", "http://metadata", "169.254.169.254",
+    
+    # Local/Remote File Inclusion (LFI/RFI)
+    "file://", "php://", "data://", "expect://", "zip://", "compress.zlib://",
+    "compress.bzip2://", "phar://", "rar://", "ogg://", "ssh2://", "glob://",
+    "include=", "require=", "page=", "file=", "path=", "template=", "doc=",
+    
+    # Brute Force/Credential Stuffing
+    "login", "signin", "password=", "passwd=", "user=", "username=", "email=",
+    "admin", "administrator", "root", "guest", "test", "demo", "default",
+    "auth", "authenticate", "credential", "token=", "session=",
+    
+    # HTTP Parameter Pollution
+    "&&", "%26", "param=", "var=", "field=", "input=", "data=",
+    
+    # XXE (XML External Entity)
+    "<!doctype", "<!entity", "!entity", "system", "public", "<?xml", "<!xml",
+    "<!element", "<!attlist", "<!notation", "external", "entity",
+    
+    # Web Shell Upload
+    "webshell", ".php?", "cmd.php", "shell.php", "c99.php", "r57.php", "wso.php",
+    "upload", "file_upload", "fileupload", "upload.php", "uploader.php",
+    "shell", "backdoor", "trojan", "malware", "virus",
+    
+    # Typosquatting indicators
+    "paypal", "amazon", "google", "microsoft", "apple", "facebook", "twitter",
+    "github", "stackoverflow", "wikipedia", "youtube", "instagram", "linkedin",
+    "netflix", "spotify", "dropbox", "gmail", "yahoo", "hotmail", "outlook"
+]
+
+# Attack type labels for multiclass classification
+ATTACK_TYPES = [
+    "benign",
+    "typosquatting", 
+    "sql_injection",
+    "xss",
+    "directory_traversal",
+    "command_injection", 
+    "ssrf",
+    "lfi_rfi",
+    "brute_force",
+    "http_parameter_pollution",
+    "xxe",
+    "web_shell_upload"
 ]
 
 
@@ -111,13 +165,28 @@ def count_query_params(url: str) -> int:
 
 
 class HandcraftedFeatures(BaseEstimator, TransformerMixin):
-    """Generate numeric features from raw URL strings.
+    """Generate comprehensive numeric features from raw URL strings.
 
     Output shape: (n_samples, n_features)
     Features include:
       0. length of URL
-      1. number of query params
-      2..n: presence counts for suspicious characters
+      1. number of query parameters
+      2. number of path segments (directories)
+      3. number of subdomains
+      4. has IP address instead of domain (0/1)
+      5. uses HTTPS (0/1)
+      6. has port number (0/1)
+      7. has authentication info (user:pass@) (0/1)
+      8. has fragment (#) (0/1)
+      9. URL depth (number of '/' in path)
+      10. domain length
+      11. path length
+      12. query string length
+      13. number of digits in URL
+      14. number of uppercase letters
+      15. ratio of digits to total characters
+      16. ratio of special chars to total characters
+      17..n: presence counts for suspicious characters
       n+..: presence counts for suspicious keywords
       last: shannon entropy of URL
     """
@@ -129,16 +198,83 @@ class HandcraftedFeatures(BaseEstimator, TransformerMixin):
     def fit(self, X: List[str], y: Any = None):  # noqa: N802 (sklearn API)
         return self
 
+    def _extract_url_parts(self, url: str) -> dict:
+        """Extract different parts of URL for feature calculation."""
+        from urllib.parse import urlparse
+        try:
+            parsed = urlparse(url)
+            return {
+                'scheme': parsed.scheme or '',
+                'netloc': parsed.netloc or '',
+                'path': parsed.path or '',
+                'query': parsed.query or '',
+                'fragment': parsed.fragment or '',
+                'hostname': parsed.hostname or '',
+                'port': parsed.port
+            }
+        except:
+            return {
+                'scheme': '', 'netloc': '', 'path': '', 'query': '', 
+                'fragment': '', 'hostname': '', 'port': None
+            }
+
+    def _is_ip_address(self, hostname: str) -> bool:
+        """Check if hostname is an IP address."""
+        import re
+        ipv4_pattern = r'^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$'
+        ipv6_pattern = r'^(?:[0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}$'
+        return bool(re.match(ipv4_pattern, hostname) or re.match(ipv6_pattern, hostname))
+
     def transform(self, X: List[str]):  # noqa: N802 (sklearn API)
         vectors: List[List[float]] = []
         for url in X:
-            u = clean_url(str(url).lower())
+            u = clean_url(str(url))
+            u_lower = u.lower()
+            
+            # Parse URL components
+            parts = self._extract_url_parts(u)
+            
+            # Basic features
             length = float(len(u))
             n_params = float(count_query_params(u))
-            char_counts = [float(u.count(ch.lower())) for ch in self.char_list]
-            keyword_counts = [float(u.count(kw)) for kw in self.keyword_list]
+            
+            # URL structure features
+            path_segments = float(len([p for p in parts['path'].split('/') if p]))
+            subdomains = float(len(parts['hostname'].split('.')) - 2) if parts['hostname'] and '.' in parts['hostname'] else 0.0
+            has_ip = float(self._is_ip_address(parts['hostname']) if parts['hostname'] else False)
+            uses_https = float(parts['scheme'] == 'https')
+            has_port = float(parts['port'] is not None)
+            has_auth = float('@' in parts['netloc'])
+            has_fragment = float(bool(parts['fragment']))
+            url_depth = float(u.count('/') - 2) if u.startswith(('http://', 'https://')) else float(u.count('/'))
+            
+            # Length features
+            domain_length = float(len(parts['hostname'])) if parts['hostname'] else 0.0
+            path_length = float(len(parts['path']))
+            query_length = float(len(parts['query']))
+            
+            # Character composition features
+            digits = sum(1 for c in u if c.isdigit())
+            uppercase = sum(1 for c in u if c.isupper())
+            digit_ratio = float(digits / len(u)) if len(u) > 0 else 0.0
+            special_chars = sum(1 for c in u if not c.isalnum() and c not in ':/.-_')
+            special_ratio = float(special_chars / len(u)) if len(u) > 0 else 0.0
+            
+            # Suspicious character and keyword counts
+            char_counts = [float(u_lower.count(ch.lower())) for ch in self.char_list]
+            keyword_counts = [float(u_lower.count(kw)) for kw in self.keyword_list]
+            
+            # Entropy
             entropy = float(shannon_entropy(u))
-            vec = [length, n_params] + char_counts + keyword_counts + [entropy]
+            
+            # Combine all features
+            vec = [
+                length, n_params, path_segments, subdomains, has_ip, uses_https,
+                has_port, has_auth, has_fragment, url_depth, domain_length,
+                path_length, query_length, float(digits), float(uppercase),
+                digit_ratio, special_ratio
+            ] + char_counts + keyword_counts + [entropy]
+            
             vectors.append(vec)
         return np.array(vectors, dtype=np.float64)
 
@@ -168,6 +304,79 @@ def build_pipeline(model_name: str = "rf", use_tfidf: bool = True):
 
     return Pipeline(steps=[("union", union), ("clf", clf)])
 
+
+def detect_attack_type(url: str) -> str:
+    """Automatically detect attack type based on URL patterns."""
+    url_lower = url.lower()
+    
+    # SQL Injection patterns
+    sql_patterns = ["'", "union", "select", "drop", "insert", "update", "delete", 
+                   "or 1=1", "sleep(", "waitfor", "information_schema", "@@version"]
+    if any(pattern in url_lower for pattern in sql_patterns):
+        return "sql_injection"
+    
+    # XSS patterns
+    xss_patterns = ["<script", "javascript:", "onerror=", "onload=", "alert(", 
+                   "document.cookie", "eval(", "<iframe", "<img", "<svg"]
+    if any(pattern in url_lower for pattern in xss_patterns):
+        return "xss"
+    
+    # Directory Traversal patterns
+    traversal_patterns = ["../", "..\\", "....//", "....\\\\", "%2e%2e%2f", 
+                         "etc/passwd", "boot.ini", "win.ini"]
+    if any(pattern in url_lower for pattern in traversal_patterns):
+        return "directory_traversal"
+    
+    # Command Injection patterns
+    cmd_patterns = ["cmd=", "command=", "exec=", "system(", "shell_exec", 
+                   "whoami", "cat ", "ls ", "dir ", "ping ", "wget ", "curl "]
+    if any(pattern in url_lower for pattern in cmd_patterns):
+        return "command_injection"
+    
+    # SSRF patterns
+    ssrf_patterns = ["169.254.169.254", "localhost", "127.0.0.1", "metadata", 
+                    "file://", "gopher://", "dict://", "ftp://"]
+    if any(pattern in url_lower for pattern in ssrf_patterns):
+        return "ssrf"
+    
+    # LFI/RFI patterns
+    lfi_patterns = ["php://", "data://", "expect://", "zip://", "compress.", 
+                   "phar://", "include=", "page=", "file="]
+    if any(pattern in url_lower for pattern in lfi_patterns):
+        return "lfi_rfi"
+    
+    # XXE patterns
+    xxe_patterns = ["<!doctype", "<!entity", "<?xml", "<!element", "system"]
+    if any(pattern in url_lower for pattern in xxe_patterns):
+        return "xxe"
+    
+    # Web Shell Upload patterns
+    shell_patterns = ["upload", "shell.php", "cmd.php", "webshell", "backdoor", 
+                     "c99.php", "r57.php", "wso.php"]
+    if any(pattern in url_lower for pattern in shell_patterns):
+        return "web_shell_upload"
+    
+    # HTTP Parameter Pollution (multiple same parameters)
+    if url.count('&') > 0:
+        params = url.split('?')[-1].split('&') if '?' in url else []
+        param_names = [p.split('=')[0] for p in params if '=' in p]
+        if len(param_names) != len(set(param_names)):
+            return "http_parameter_pollution"
+    
+    # Brute Force patterns
+    brute_patterns = ["login", "password=", "passwd=", "username=", "admin", 
+                     "root", "guest", "test", "demo", "default"]
+    if any(pattern in url_lower for pattern in brute_patterns):
+        return "brute_force"
+    
+    # Typosquatting patterns (common brand misspellings)
+    typo_patterns = ["gooogle", "payp4l", "amazom", "micr0soft", "fac3book", 
+                    "twitt3r", "gith0b", "netfl1x", "sp0tify", "dr0pbox", 
+                    "gmai1", "yah00", "hotmai1", "0utlook", "instaqram"]
+    if any(pattern in url_lower for pattern in typo_patterns):
+        return "typosquatting"
+    
+    return "benign"
 
 def _prepare_labels(labels: pd.Series, task: str) -> Tuple[pd.Series, List[str]]:
     labels = labels.astype(str)
