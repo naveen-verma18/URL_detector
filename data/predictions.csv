@@ -1,0 +1,9 @@
+url,is_attack,attack_type,task
+http://example.com,True,0,multiclass
+https://secure-site.com/login,True,0,multiclass
+http://malicious-site.ru/free-money,True,1,multiclass
+https://safe-domain.org/about,True,0,multiclass
+http://phishingsite.com/verify@bank,True,1,multiclass
+http://short.ly-a-b-c.net,True,0,multiclass
+https://trusted.co.uk/products,True,0,multiclass
+http://login-update-secure-account-info.cn,True,1,multiclass

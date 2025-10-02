@@ -1,0 +1,186 @@
+{
+  "summary": {
+    "total_urls": 10,
+    "malicious_count": 7,
+    "top_malicious_domains": [
+      [
+        "localhost:8081",
+        7
+      ]
+    ],
+    "time_range": [
+      "2025-09-29T18:05:53.655342Z",
+      "2025-09-29T18:06:56.507886Z"
+    ],
+    "attack_types_breakdown": {
+      "benign": 3,
+      "malicious": 7
+    },
+    "ml_attack_types_breakdown": {
+      "benign": 3,
+      "malicious": 7
+    }
+  },
+  "results": [
+    {
+      "timestamp": "2025-09-29T18:05:53.655342Z",
+      "src_ip": "172.17.0.1",
+      "dst_ip": "172.17.0.2",
+      "domain": "localhost:8081",
+      "url": "http://localhost:8081/login.php",
+      "user_agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
+      "status_code": null,
+      "content_type": "application/x-www-form-urlencoded",
+      "is_malicious": false,
+      "attack_type": "benign",
+      "ml_attack_type": "benign",
+      "heuristic_attack_type": "phishing",
+      "attack_success": false,
+      "requires_manual_review": false
+    },
+    {
+      "timestamp": "2025-09-29T18:05:53.664473Z",
+      "src_ip": "172.17.0.1",
+      "dst_ip": "172.17.0.2",
+      "domain": "localhost:8081",
+      "url": "http://localhost:8081/portal.php",
+      "user_agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
+      "status_code": null,
+      "content_type": "",
+      "is_malicious": false,
+      "attack_type": "benign",
+      "ml_attack_type": "benign",
+      "heuristic_attack_type": "unknown",
+      "attack_success": false,
+      "requires_manual_review": true
+    },
+    {
+      "timestamp": "2025-09-29T18:06:14.655732Z",
+      "src_ip": "172.17.0.1",
+      "dst_ip": "172.17.0.2",
+      "domain": "localhost:8081",
+      "url": "http://localhost:8081/portal.php",
+      "user_agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
+      "status_code": null,
+      "content_type": "application/x-www-form-urlencoded",
+      "is_malicious": false,
+      "attack_type": "benign",
+      "ml_attack_type": "benign",
+      "heuristic_attack_type": "unknown",
+      "attack_success": false,
+      "requires_manual_review": false
+    },
+    {
+      "timestamp": "2025-09-29T18:06:14.661988Z",
+      "src_ip": "172.17.0.1",
+      "dst_ip": "172.17.0.2",
+      "domain": "localhost:8081",
+      "url": "http://localhost:8081/commandi.php",
+      "user_agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
+      "status_code": null,
+      "content_type": "",
+      "is_malicious": true,
+      "attack_type": "malicious",
+      "ml_attack_type": "malicious",
+      "heuristic_attack_type": "unknown",
+      "attack_success": false,
+      "requires_manual_review": true
+    },
+    {
+      "timestamp": "2025-09-29T18:06:19.672808Z",
+      "src_ip": "172.17.0.1",
+      "dst_ip": "172.17.0.2",
+      "domain": "localhost:8081",
+      "url": "http://localhost:8081/commandi.php",
+      "user_agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
+      "status_code": null,
+      "content_type": "application/x-www-form-urlencoded",
+      "is_malicious": true,
+      "attack_type": "malicious",
+      "ml_attack_type": "malicious",
+      "heuristic_attack_type": "unknown",
+      "attack_success": false,
+      "requires_manual_review": false
+    },
+    {
+      "timestamp": "2025-09-29T18:06:26.335387Z",
+      "src_ip": "172.17.0.1",
+      "dst_ip": "172.17.0.2",
+      "domain": "localhost:8081",
+      "url": "http://localhost:8081/commandi.php",
+      "user_agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
+      "status_code": null,
+      "content_type": "application/x-www-form-urlencoded",
+      "is_malicious": true,
+      "attack_type": "malicious",
+      "ml_attack_type": "malicious",
+      "heuristic_attack_type": "unknown",
+      "attack_success": false,
+      "requires_manual_review": false
+    },
+    {
+      "timestamp": "2025-09-29T18:06:47.545509Z",
+      "src_ip": "172.17.0.1",
+      "dst_ip": "172.17.0.2",
+      "domain": "localhost:8081",
+      "url": "http://localhost:8081/commandi.php",
+      "user_agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
+      "status_code": null,
+      "content_type": "application/x-www-form-urlencoded",
+      "is_malicious": true,
+      "attack_type": "malicious",
+      "ml_attack_type": "malicious",
+      "heuristic_attack_type": "unknown",
+      "attack_success": false,
+      "requires_manual_review": false
+    },
+    {
+      "timestamp": "2025-09-29T18:06:47.550755Z",
+      "src_ip": "172.17.0.1",
+      "dst_ip": "172.17.0.2",
+      "domain": "localhost:8081",
+      "url": "http://localhost:8081/xss_get.php",
+      "user_agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
+      "status_code": null,
+      "content_type": "",
+      "is_malicious": true,
+      "attack_type": "malicious",
+      "ml_attack_type": "malicious",
+      "heuristic_attack_type": "unknown",
+      "attack_success": false,
+      "requires_manual_review": true
+    },
+    {
+      "timestamp": "2025-09-29T18:06:51.923722Z",
+      "src_ip": "172.17.0.1",
+      "dst_ip": "172.17.0.2",
+      "domain": "localhost:8081",
+      "url": "http://localhost:8081/xss_get.php?firstname=%3Cscript%3Ealert%28%27XSS%27%29%3C%2Fscript%3E&lastname=&form=submit",
+      "user_agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
+      "status_code": null,
+      "content_type": "",
+      "is_malicious": true,
+      "attack_type": "malicious",
+      "ml_attack_type": "malicious",
+      "heuristic_attack_type": "unknown",
+      "attack_success": false,
+      "requires_manual_review": true
+    },
+    {
+      "timestamp": "2025-09-29T18:06:56.507886Z",
+      "src_ip": "172.17.0.1",
+      "dst_ip": "172.17.0.2",
+      "domain": "localhost:8081",
+      "url": "http://localhost:8081/xss_get.php?firstname=%3Cscript%3Ealert%28%27XSS%27%29%3C%2Fscript%3E&lastname=he&form=submit",
+      "user_agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
+      "status_code": null,
+      "content_type": "",
+      "is_malicious": true,
+      "attack_type": "malicious",
+      "ml_attack_type": "malicious",
+      "heuristic_attack_type": "unknown",
+      "attack_success": false,
+      "requires_manual_review": true
+    }
+  ]
+}

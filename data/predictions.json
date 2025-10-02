@@ -1,0 +1,50 @@
+[
+  {
+    "url": "http://example.com",
+    "is_attack": true,
+    "attack_type": "0",
+    "task": "multiclass"
+  },
+  {
+    "url": "https://secure-site.com/login",
+    "is_attack": true,
+    "attack_type": "0",
+    "task": "multiclass"
+  },
+  {
+    "url": "http://malicious-site.ru/free-money",
+    "is_attack": true,
+    "attack_type": "1",
+    "task": "multiclass"
+  },
+  {
+    "url": "https://safe-domain.org/about",
+    "is_attack": true,
+    "attack_type": "0",
+    "task": "multiclass"
+  },
+  {
+    "url": "http://phishingsite.com/verify@bank",
+    "is_attack": true,
+    "attack_type": "1",
+    "task": "multiclass"
+  },
+  {
+    "url": "http://short.ly-a-b-c.net",
+    "is_attack": true,
+    "attack_type": "0",
+    "task": "multiclass"
+  },
+  {
+    "url": "https://trusted.co.uk/products",
+    "is_attack": true,
+    "attack_type": "0",
+    "task": "multiclass"
+  },
+  {
+    "url": "http://login-update-secure-account-info.cn",
+    "is_attack": true,
+    "attack_type": "1",
+    "task": "multiclass"
+  }
+]

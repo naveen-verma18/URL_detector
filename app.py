@@ -29,6 +29,12 @@ from werkzeug.utils import secure_filename
 import joblib
 
 from pcap_processor import parse_pcap, analyze_records, featureize_url
+# Import ML classes needed for model loading
+try:
+    from scripts.url_ml import HandcraftedFeatures, build_pipeline, predict_url
+except ImportError:
+    # Fallback if import fails
+    HandcraftedFeatures = None
 from storage import (
     init_db,
     insert_upload,
@@ -164,6 +170,23 @@ def predict():
         return jsonify({"error": 'Invalid payload. Use {"url": "URL_HERE"}'}), 400
 
     try:
+        # Try to use the enhanced predict_url function if available
+        if predict_url and MODEL_PATH.exists():
+            try:
+                result = predict_url(url, MODEL_PATH)
+                return jsonify({
+                    "url": result["url"],
+                    "is_malicious": result["is_attack"],
+                    "is_attack": result["is_attack"],
+                    "attack_type": result["attack_type"],
+                    "task": result.get("task", "multiclass"),
+                    "confidence": "high"
+                })
+            except Exception as e:
+                print(f"Enhanced prediction failed: {e}")
+                # Fall back to direct model usage
+        
+        # Fallback to direct model usage
         pipeline = MODEL["pipeline"]
         task = MODEL.get("task", "binary")
         
@@ -178,7 +201,7 @@ def predict():
                 "is_attack": is_attack,
                 "attack_type": str(pred),
                 "task": task,
-                "confidence": "high" if is_attack else "high"  # Could be enhanced with probability scores
+                "confidence": "high"
             })
         else:
             # Use the legacy binary model

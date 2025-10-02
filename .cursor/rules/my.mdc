@@ -1,0 +1,19 @@
+---
+alwaysApply: true
+---
+
+# Coding Pattern Rules
+
+- Always prefer simple and straightforward solutions over complex ones.  
+- Always check for existing implementations before writing new code. Avoid duplication.  
+- Always write code that works consistently across environments (dev, test, prod).  
+- Always keep the codebase clean, organized, and easy to read.  
+- Always refactor files once they exceed 200–300 lines of code.  
+- Always confirm with me before modifying or overwriting `.env` files.  
+
+- Never make changes unless they are clearly requested or well understood.  
+- Never introduce new patterns or technologies when fixing bugs unless all existing options are exhausted.  
+- Never leave old implementations in the codebase after replacing them—remove duplicates.  
+- Never write scripts in permanent files if they are only intended to run once.  
+- Never mock or stub data in dev or prod environments (mocking is allowed only for tests).  
+- Never add fake data patterns to code that affects dev or prod environments.  
