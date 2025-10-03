@@ -45,7 +45,8 @@ PROJECT_ROOT = Path(__file__).resolve().parent
 DATA_DIR = PROJECT_ROOT / "data"
 RAW_UPLOADS_DIR = DATA_DIR / "raw_uploads"
 UPLOADS_DIR = DATA_DIR / "uploads"
-MODEL_PATH = PROJECT_ROOT / "models" / "url_detector.pkl"
+MODEL_PATH = PROJECT_ROOT / "models" / "url_detector_multiclass.pkl"
+FALLBACK_MODEL_PATH = PROJECT_ROOT / "models" / "url_detector.pkl"
 KNOWN_SUSPICIOUS_IPS = DATA_DIR / "known_suspicious_ips.txt"
 
 RAW_UPLOADS_DIR.mkdir(parents=True, exist_ok=True)
@@ -62,11 +63,28 @@ CORS(app, resources={r"/*": {"origins": "*"}})  # Simple CORS for local dev
 # Model loading
 # -----------------------------------------------------------------------------
 def load_model():
-    if not MODEL_PATH.exists():
-        raise FileNotFoundError(
-            f"Model not found at {MODEL_PATH}. Train it with `python scripts/train_model.py`."
-        )
-    return joblib.load(MODEL_PATH)
+    """Load the multiclass model, fallback to binary model if not available."""
+    if MODEL_PATH.exists():
+        try:
+            model_data = joblib.load(MODEL_PATH)
+            if isinstance(model_data, dict) and "pipeline" in model_data:
+                return model_data  # Enhanced multiclass model
+            else:
+                return {"pipeline": model_data, "classes": None, "task": "binary"}  # Legacy format
+        except Exception as e:
+            print(f"Error loading multiclass model: {e}")
+    
+    # Fallback to binary model
+    if FALLBACK_MODEL_PATH.exists():
+        try:
+            model = joblib.load(FALLBACK_MODEL_PATH)
+            return {"pipeline": model, "classes": None, "task": "binary"}
+        except Exception as e:
+            print(f"Error loading fallback model: {e}")
+    
+    raise FileNotFoundError(
+        f"No model found. Train with `python scripts/url_ml.py train --csv data/url_data_multiclass.csv --task multiclass`"
+    )
 
 try:
     MODEL = load_model()
@@ -85,7 +103,7 @@ def now_iso() -> str:
 def ensure_model_ready():
     if MODEL is None:
         raise RuntimeError(
-            "Model is not loaded. Please run `python scripts/train_model.py` and restart the server."
+            "Model is not loaded. Please run `python scripts/url_ml.py train --csv data/url_data_multiclass.csv --task multiclass` and restart the server."
         )
 
 def save_results_to_disk(upload_id: str, records: list, results: list, summary: dict):
@@ -145,13 +163,39 @@ def predict():
     if not url or not isinstance(url, str):
         return jsonify({"error": 'Invalid payload. Use {"url": "URL_HERE"}'}), 400
 
-    feats = [featureize_url(url)]
     try:
-        pred = MODEL.predict(feats)[0]
+        pipeline = MODEL["pipeline"]
+        task = MODEL.get("task", "binary")
+        
+        if task == "multiclass":
+            # Use the enhanced multiclass model
+            pred = pipeline.predict([url])[0]
+            is_attack = str(pred).lower() != "benign"
+            
+            return jsonify({
+                "url": url,
+                "is_malicious": is_attack,
+                "is_attack": is_attack,
+                "attack_type": str(pred),
+                "task": task,
+                "confidence": "high" if is_attack else "high"  # Could be enhanced with probability scores
+            })
+        else:
+            # Use the legacy binary model
+            feats = [featureize_url(url)]
+            pred = pipeline.predict(feats)[0]
+            is_malicious = bool(int(pred) == 1)
+            
+            return jsonify({
+                "url": url,
+                "is_malicious": is_malicious,
+                "is_attack": is_malicious,
+                "attack_type": "malicious" if is_malicious else "benign",
+                "task": task
+            })
+            
     except Exception as e:
         return jsonify({"error": f"Prediction failed: {e}"}), 500
-
-    return jsonify({"url": url, "is_malicious": bool(int(pred) == 1)})
 
 @app.route("/upload-pcap", methods=["POST"])
 def upload_pcap():

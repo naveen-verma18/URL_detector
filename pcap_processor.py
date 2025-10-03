@@ -215,7 +215,12 @@ def parse_pcap(file_path: Path, known_suspicious_ips_path: Path) -> list:
 # -------------------------- Model feature extraction --------------------------
 
 def featureize_url(url: str):
-    # Keep order identical to training
+    """
+    Extract features from URL for the enhanced multiclass model.
+    This function is kept for backward compatibility with the simple binary model.
+    For the multiclass model, features are extracted by the HandcraftedFeatures transformer.
+    """
+    # Keep order identical to training for simple binary model
     return [
         len(url),              # length
         url.count("."),        # dots
@@ -291,12 +296,34 @@ def analyze_records(records: list, model, known_suspicious_ips_path: Path):
         if not url:
             # skip if no URL or domain
             continue
-        feats = [featureize_url(url)]
+        
+        # Determine if we're using the enhanced multiclass model or legacy binary model
         try:
-            pred = model.predict(feats)[0]
+            if isinstance(model, dict) and "pipeline" in model:
+                # Enhanced multiclass model
+                pipeline = model["pipeline"]
+                task = model.get("task", "binary")
+                
+                if task == "multiclass":
+                    pred = pipeline.predict([url])[0]
+                    is_mal = str(pred).lower() != "benign"
+                    ml_attack_type = str(pred)
+                else:
+                    # Binary model in new format
+                    feats = [featureize_url(url)]
+                    pred = pipeline.predict(feats)[0]
+                    is_mal = bool(int(pred) == 1)
+                    ml_attack_type = "malicious" if is_mal else "benign"
+            else:
+                # Legacy binary model
+                feats = [featureize_url(url)]
+                pred = model.predict(feats)[0]
+                is_mal = bool(int(pred) == 1)
+                ml_attack_type = "malicious" if is_mal else "benign"
         except Exception:
-            pred = 0
-        is_mal = bool(int(pred) == 1)
+            is_mal = False
+            ml_attack_type = "unknown"
+        
         if is_mal:
             malicious_count += 1
 
@@ -304,8 +331,12 @@ def analyze_records(records: list, model, known_suspicious_ips_path: Path):
         if domain:
             domains_counter[domain] = domains_counter.get(domain, 0) + (1 if is_mal else 0)
 
-        attack_type = infer_attack_type(url)
+        # Use heuristic attack type detection as fallback/additional info
+        heuristic_attack_type = infer_attack_type(url)
         attack_success, requires_manual_review = infer_attack_success(r, known_bad)
+
+        # Prefer ML prediction over heuristic, but include both
+        final_attack_type = ml_attack_type if ml_attack_type != "unknown" else heuristic_attack_type
 
         out = {
             "timestamp": r.get("timestamp"),
@@ -317,7 +348,9 @@ def analyze_records(records: list, model, known_suspicious_ips_path: Path):
             "status_code": r.get("status_code"),
             "content_type": r.get("content_type"),
             "is_malicious": is_mal,
-            "attack_type": attack_type,
+            "attack_type": final_attack_type,
+            "ml_attack_type": ml_attack_type,
+            "heuristic_attack_type": heuristic_attack_type,
             "attack_success": attack_success,
             "requires_manual_review": requires_manual_review,
         }
@@ -330,9 +363,12 @@ def analyze_records(records: list, model, known_suspicious_ips_path: Path):
         max((r.get("timestamp") for r in records if r.get("timestamp")), default=None),
     )
     types_breakdown = {}
+    ml_types_breakdown = {}
     for x in results:
         t = x["attack_type"]
+        ml_t = x["ml_attack_type"]
         types_breakdown[t] = types_breakdown.get(t, 0) + 1
+        ml_types_breakdown[ml_t] = ml_types_breakdown.get(ml_t, 0) + 1
 
     summary = {
         "total_urls": len(results),
@@ -340,5 +376,6 @@ def analyze_records(records: list, model, known_suspicious_ips_path: Path):
         "top_malicious_domains": top_domains,
         "time_range": time_range,
         "attack_types_breakdown": types_breakdown,
+        "ml_attack_types_breakdown": ml_types_breakdown,
     }
     return results, summary

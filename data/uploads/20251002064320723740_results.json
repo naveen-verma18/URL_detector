@@ -1,0 +1,192 @@
+{
+  "summary": {
+    "total_urls": 11,
+    "malicious_count": 5,
+    "top_malicious_domains": [
+      [
+        "ocsp.digicert.com",
+        2
+      ],
+      [
+        "crl.pki.goog",
+        1
+      ],
+      [
+        "o.pki.goog",
+        1
+      ],
+      [
+        "crl3.digicert.com",
+        1
+      ],
+      [
+        "239.255.255.250:1900",
+        0
+      ]
+    ],
+    "time_range": [
+      "2025-10-01T06:41:04.156170Z",
+      "2025-10-01T06:44:28.189254Z"
+    ],
+    "attack_types_breakdown": {
+      "unknown": 10,
+      "phishing": 1
+    }
+  },
+  "results": [
+    {
+      "timestamp": "2025-10-01T06:41:04.156170Z",
+      "src_ip": "192.168.12.1",
+      "dst_ip": "239.255.255.250",
+      "domain": "239.255.255.250:1900",
+      "url": "http://239.255.255.250:1900/",
+      "user_agent": "Google Chrome/140.0.7339.186 Linux",
+      "status_code": null,
+      "content_type": "",
+      "is_malicious": false,
+      "attack_type": "unknown",
+      "attack_success": false,
+      "requires_manual_review": true
+    },
+    {
+      "timestamp": "2025-10-01T06:41:05.157348Z",
+      "src_ip": "192.168.12.1",
+      "dst_ip": "239.255.255.250",
+      "domain": "239.255.255.250:1900",
+      "url": "http://239.255.255.250:1900/",
+      "user_agent": "Google Chrome/140.0.7339.186 Linux",
+      "status_code": null,
+      "content_type": "",
+      "is_malicious": false,
+      "attack_type": "unknown",
+      "attack_success": false,
+      "requires_manual_review": true
+    },
+    {
+      "timestamp": "2025-10-01T06:43:02.155156Z",
+      "src_ip": "192.168.12.1",
+      "dst_ip": "239.255.255.250",
+      "domain": "239.255.255.250:1900",
+      "url": "http://239.255.255.250:1900/",
+      "user_agent": "Google Chrome/140.0.7339.186 Linux",
+      "status_code": null,
+      "content_type": "",
+      "is_malicious": false,
+      "attack_type": "unknown",
+      "attack_success": false,
+      "requires_manual_review": true
+    },
+    {
+      "timestamp": "2025-10-01T06:43:03.156233Z",
+      "src_ip": "192.168.12.1",
+      "dst_ip": "239.255.255.250",
+      "domain": "239.255.255.250:1900",
+      "url": "http://239.255.255.250:1900/",
+      "user_agent": "Google Chrome/140.0.7339.186 Linux",
+      "status_code": null,
+      "content_type": "",
+      "is_malicious": false,
+      "attack_type": "unknown",
+      "attack_success": false,
+      "requires_manual_review": true
+    },
+    {
+      "timestamp": "2025-10-01T06:43:04.157412Z",
+      "src_ip": "192.168.12.1",
+      "dst_ip": "239.255.255.250",
+      "domain": "239.255.255.250:1900",
+      "url": "http://239.255.255.250:1900/",
+      "user_agent": "Google Chrome/140.0.7339.186 Linux",
+      "status_code": null,
+      "content_type": "",
+      "is_malicious": false,
+      "attack_type": "unknown",
+      "attack_success": false,
+      "requires_manual_review": true
+    },
+    {
+      "timestamp": "2025-10-01T06:43:05.158300Z",
+      "src_ip": "192.168.12.1",
+      "dst_ip": "239.255.255.250",
+      "domain": "239.255.255.250:1900",
+      "url": "http://239.255.255.250:1900/",
+      "user_agent": "Google Chrome/140.0.7339.186 Linux",
+      "status_code": null,
+      "content_type": "",
+      "is_malicious": false,
+      "attack_type": "unknown",
+      "attack_success": false,
+      "requires_manual_review": true
+    },
+    {
+      "timestamp": "2025-10-01T06:44:14.964223Z",
+      "src_ip": "192.168.12.146",
+      "dst_ip": "142.251.42.67",
+      "domain": "crl.pki.goog",
+      "url": "http://crl.pki.goog/gsr1/gsr1.crl",
+      "user_agent": "Microsoft-CryptoAPI/10.0",
+      "status_code": null,
+      "content_type": "",
+      "is_malicious": true,
+      "attack_type": "unknown",
+      "attack_success": false,
+      "requires_manual_review": true
+    },
+    {
+      "timestamp": "2025-10-01T06:44:15.084927Z",
+      "src_ip": "192.168.12.146",
+      "dst_ip": "142.251.42.67",
+      "domain": "o.pki.goog",
+      "url": "http://o.pki.goog/wr2/MFEwTzBNMEswSTAJBgUrDgMCGgUABBRTQtSEi8EX%2BbYUTXd8%2ByMxD3s1zQQU3hse7XkV1D43JMMhu%2Bw0OW1CsjACEEpZingeeJ%2BzEoO8SUfqx8g%3D",
+      "user_agent": "Microsoft-CryptoAPI/10.0",
+      "status_code": null,
+      "content_type": "",
+      "is_malicious": true,
+      "attack_type": "unknown",
+      "attack_success": false,
+      "requires_manual_review": true
+    },
+    {
+      "timestamp": "2025-10-01T06:44:15.283448Z",
+      "src_ip": "192.168.12.146",
+      "dst_ip": "23.38.59.250",
+      "domain": "ocsp.digicert.com",
+      "url": "http://ocsp.digicert.com/MFEwTzBNMEswSTAJBgUrDgMCGgUABBTrjrydRyt%2BApF3GSPypfHBxR5XtQQUs9tIpPmhxdiuNkHMEWNpYim8S8YCEAsA6S1NbXMfyjBZx8seGIY%3D",
+      "user_agent": "Microsoft-CryptoAPI/10.0",
+      "status_code": null,
+      "content_type": "",
+      "is_malicious": true,
+      "attack_type": "unknown",
+      "attack_success": false,
+      "requires_manual_review": true
+    },
+    {
+      "timestamp": "2025-10-01T06:44:15.467078Z",
+      "src_ip": "192.168.12.146",
+      "dst_ip": "23.38.59.250",
+      "domain": "ocsp.digicert.com",
+      "url": "http://ocsp.digicert.com/MFEwTzBNMEswSTAJBgUrDgMCGgUABBQ50otx%2Fh0Ztl%2Bz8SiPI7wEWVxDlQQUTiJUIBiV5uNu5g%2F6%2BrkS7QYXjzkCEAhflMAthXvozBT%2FU%2B2iPio%3D",
+      "user_agent": "Microsoft-CryptoAPI/10.0",
+      "status_code": null,
+      "content_type": "",
+      "is_malicious": true,
+      "attack_type": "unknown",
+      "attack_success": false,
+      "requires_manual_review": true
+    },
+    {
+      "timestamp": "2025-10-01T06:44:28.189254Z",
+      "src_ip": "192.168.12.146",
+      "dst_ip": "23.38.59.250",
+      "domain": "crl3.digicert.com",
+      "url": "http://crl3.digicert.com/DigiCertTrustedG4CodeSigningRSA4096SHA3842021CA1.crl",
+      "user_agent": "Microsoft-CryptoAPI/10.0",
+      "status_code": null,
+      "content_type": "",
+      "is_malicious": true,
+      "attack_type": "phishing",
+      "attack_success": false,
+      "requires_manual_review": true
+    }
+  ]
+}
