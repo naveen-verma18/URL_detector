@@ -58,28 +58,6 @@ import joblib
 
 # --------------------------------- Utilities ---------------------------------
 
-<<<<<<< HEAD
-SUSPICIOUS_CHARS = ["'", '"', "<", ">", ";", "--", "../", "%"]
-SUSPICIOUS_KEYWORDS = [
-    # SQLi
-    "select", "union", "drop", "insert", "update", "delete", "or 1=1", "sleep(",
-    # XSS
-    "<script", "javascript:", "onerror=", "onload=",
-    # Command Injection
-    "cmd=", ";", "&&", "||", "`", "$(",
-    # Traversal / LFI/RFI
-    "../", "..\\", "etc/passwd", "file://", "php://", "data://",
-    # SSRF
-    "http://169.254.169.254", "metadata.google.internal",
-    # Cred Stuffing / brute force hints
-    "login", "signin", "password=", "passwd=",
-    # HPP
-    "&&", "%26",
-    # XXE
-    "<!doctype", "<!entity", "!entity",
-    # Web shell
-    "webshell", ".php?", "cmd.php", "shell.php",
-=======
 SUSPICIOUS_CHARS = ["'", '"', "<", ">", ";", "--", "../", "%", "`", "$", "&", "|", "\\", "{", "}", "[", "]", "(", ")", "*", "?", "+", "=", "~", "^"]
 
 # Comprehensive attack-specific keywords
@@ -154,7 +132,6 @@ ATTACK_TYPES = [
     "http_parameter_pollution",
     "xxe",
     "web_shell_upload"
->>>>>>> origin/feature/enhanced-multiclass-ml-detector
 ]
 
 
@@ -188,19 +165,11 @@ def count_query_params(url: str) -> int:
 
 
 class HandcraftedFeatures(BaseEstimator, TransformerMixin):
-<<<<<<< HEAD
-    """Generate numeric features from raw URL strings.
-=======
     """Generate comprehensive numeric features from raw URL strings.
->>>>>>> origin/feature/enhanced-multiclass-ml-detector
 
     Output shape: (n_samples, n_features)
     Features include:
       0. length of URL
-<<<<<<< HEAD
-      1. number of query params
-      2..n: presence counts for suspicious characters
-=======
       1. number of query parameters
       2. number of path segments (directories)
       3. number of subdomains
@@ -218,7 +187,6 @@ class HandcraftedFeatures(BaseEstimator, TransformerMixin):
       15. ratio of digits to total characters
       16. ratio of special chars to total characters
       17..n: presence counts for suspicious characters
->>>>>>> origin/feature/enhanced-multiclass-ml-detector
       n+..: presence counts for suspicious keywords
       last: shannon entropy of URL
     """
@@ -230,18 +198,6 @@ class HandcraftedFeatures(BaseEstimator, TransformerMixin):
     def fit(self, X: List[str], y: Any = None):  # noqa: N802 (sklearn API)
         return self
 
-<<<<<<< HEAD
-    def transform(self, X: List[str]):  # noqa: N802 (sklearn API)
-        vectors: List[List[float]] = []
-        for url in X:
-            u = clean_url(str(url).lower())
-            length = float(len(u))
-            n_params = float(count_query_params(u))
-            char_counts = [float(u.count(ch.lower())) for ch in self.char_list]
-            keyword_counts = [float(u.count(kw)) for kw in self.keyword_list]
-            entropy = float(shannon_entropy(u))
-            vec = [length, n_params] + char_counts + keyword_counts + [entropy]
-=======
     def _extract_url_parts(self, url: str) -> dict:
         """Extract different parts of URL for feature calculation."""
         from urllib.parse import urlparse
@@ -319,7 +275,6 @@ class HandcraftedFeatures(BaseEstimator, TransformerMixin):
                 digit_ratio, special_ratio
             ] + char_counts + keyword_counts + [entropy]
             
->>>>>>> origin/feature/enhanced-multiclass-ml-detector
             vectors.append(vec)
         return np.array(vectors, dtype=np.float64)
 
@@ -350,8 +305,6 @@ def build_pipeline(model_name: str = "rf", use_tfidf: bool = True):
     return Pipeline(steps=[("union", union), ("clf", clf)])
 
 
-<<<<<<< HEAD
-=======
 def detect_attack_type(url: str) -> str:
     """Automatically detect attack type based on URL patterns."""
     url_lower = url.lower()
@@ -425,7 +378,6 @@ def detect_attack_type(url: str) -> str:
     
     return "benign"
 
->>>>>>> origin/feature/enhanced-multiclass-ml-detector
 def _prepare_labels(labels: pd.Series, task: str) -> Tuple[pd.Series, List[str]]:
     labels = labels.astype(str)
     if task == "binary":
