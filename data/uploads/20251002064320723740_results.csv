@@ -1,0 +1,12 @@
+timestamp,src_ip,dst_ip,domain,url,user_agent,status_code,content_type,is_malicious,attack_type,attack_success,requires_manual_review
+2025-10-01T06:41:04.156170Z,192.168.12.1,239.255.255.250,239.255.255.250:1900,http://239.255.255.250:1900/,Google Chrome/140.0.7339.186 Linux,,,False,unknown,False,True
+2025-10-01T06:41:05.157348Z,192.168.12.1,239.255.255.250,239.255.255.250:1900,http://239.255.255.250:1900/,Google Chrome/140.0.7339.186 Linux,,,False,unknown,False,True
+2025-10-01T06:43:02.155156Z,192.168.12.1,239.255.255.250,239.255.255.250:1900,http://239.255.255.250:1900/,Google Chrome/140.0.7339.186 Linux,,,False,unknown,False,True
+2025-10-01T06:43:03.156233Z,192.168.12.1,239.255.255.250,239.255.255.250:1900,http://239.255.255.250:1900/,Google Chrome/140.0.7339.186 Linux,,,False,unknown,False,True
+2025-10-01T06:43:04.157412Z,192.168.12.1,239.255.255.250,239.255.255.250:1900,http://239.255.255.250:1900/,Google Chrome/140.0.7339.186 Linux,,,False,unknown,False,True
+2025-10-01T06:43:05.158300Z,192.168.12.1,239.255.255.250,239.255.255.250:1900,http://239.255.255.250:1900/,Google Chrome/140.0.7339.186 Linux,,,False,unknown,False,True
+2025-10-01T06:44:14.964223Z,192.168.12.146,142.251.42.67,crl.pki.goog,http://crl.pki.goog/gsr1/gsr1.crl,Microsoft-CryptoAPI/10.0,,,True,unknown,False,True
+2025-10-01T06:44:15.084927Z,192.168.12.146,142.251.42.67,o.pki.goog,http://o.pki.goog/wr2/MFEwTzBNMEswSTAJBgUrDgMCGgUABBRTQtSEi8EX%2BbYUTXd8%2ByMxD3s1zQQU3hse7XkV1D43JMMhu%2Bw0OW1CsjACEEpZingeeJ%2BzEoO8SUfqx8g%3D,Microsoft-CryptoAPI/10.0,,,True,unknown,False,True
+2025-10-01T06:44:15.283448Z,192.168.12.146,23.38.59.250,ocsp.digicert.com,http://ocsp.digicert.com/MFEwTzBNMEswSTAJBgUrDgMCGgUABBTrjrydRyt%2BApF3GSPypfHBxR5XtQQUs9tIpPmhxdiuNkHMEWNpYim8S8YCEAsA6S1NbXMfyjBZx8seGIY%3D,Microsoft-CryptoAPI/10.0,,,True,unknown,False,True
+2025-10-01T06:44:15.467078Z,192.168.12.146,23.38.59.250,ocsp.digicert.com,http://ocsp.digicert.com/MFEwTzBNMEswSTAJBgUrDgMCGgUABBQ50otx%2Fh0Ztl%2Bz8SiPI7wEWVxDlQQUTiJUIBiV5uNu5g%2F6%2BrkS7QYXjzkCEAhflMAthXvozBT%2FU%2B2iPio%3D,Microsoft-CryptoAPI/10.0,,,True,unknown,False,True
+2025-10-01T06:44:28.189254Z,192.168.12.146,23.38.59.250,crl3.digicert.com,http://crl3.digicert.com/DigiCertTrustedG4CodeSigningRSA4096SHA3842021CA1.crl,Microsoft-CryptoAPI/10.0,,,True,phishing,False,True
