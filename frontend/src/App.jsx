@@ -4,6 +4,8 @@ import Home from "./pages/Home.jsx";
 import Upload from "./pages/Upload.jsx";
 import Results from "./pages/Results.jsx";
 import Dashboard from "./pages/Dashboard.jsx";
+import DetectedAttacks from "./pages/DetectedAttacks.jsx";
+import Guide from "./pages/Guide.jsx";
 
 function NavItem({ to, label }) {
   return (
@@ -27,13 +29,17 @@ export default function App() {
       <div className="min-h-screen flex flex-col">
         <header className="bg-white shadow">
           <div className="mx-auto max-w-7xl px-4 py-4 flex items-center justify-between">
-            <Link to="/" className="text-xl font-bold text-blue-700">
-              URL Detector II
+            <Link to="/" className="text-2xl font-extrabold tracking-tight">
+              <span className="bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
+                URL Detector II
+              </span>
             </Link>
             <nav className="space-x-2">
               <NavItem to="/" label="Home" />
               <NavItem to="/upload" label="Upload" />
               <NavItem to="/dashboard" label="Dashboard" />
+              <NavItem to="/detected-attacks" label="Detected Attacks" />
+              <NavItem to="/guide" label="Guide" />
             </nav>
           </div>
         </header>
@@ -44,6 +50,8 @@ export default function App() {
             <Route path="/upload" element={<Upload />} />
             <Route path="/results/:uploadId" element={<Results />} />
             <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/detected-attacks" element={<DetectedAttacks />} />
+            <Route path="/guide" element={<Guide />} />
           </Routes>
         </main>
 
